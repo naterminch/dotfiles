@@ -14,6 +14,7 @@ autoload -Uz _zinit
 
 # Load a few important annexes, without Turbo
 # (this is currently required for annexes)
+
 zinit light-mode for \
     zdharma-continuum/zinit-annex-as-monitor \
     zdharma-continuum/zinit-annex-bin-gem-node \
@@ -45,7 +46,6 @@ alias grep='grep --color=auto'
 alias zinit-update="zinit update --parallel 40"
 
 
-
 ### Zsh Packages
 zinit pack for dircolors-material
 
@@ -59,6 +59,9 @@ zpcompinit; zpcdreplay
 zinit light Aloxaf/fzf-tab
 zinit light zdharma-continuum/fast-syntax-highlighting
 zinit light zsh-users/zsh-history-substring-search
+
+zinit load zdharma-continuum/history-search-multi-word
+zstyle ":history-search-multi-word" page-size "8"
 
 # Autosuggestion plugin config.
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
@@ -78,7 +81,8 @@ zinit light sharkdp/bat
 # Load x from OMZ
 zi snippet OMZL::git.zsh
 zi snippet OMZP::git
-zi cdclear -q # <- forget completions provided up to this moment
+
+zi cdclear -q
 zi snippet OMZP::kubectx
 zi snippet OMZP::kubectl
 
@@ -93,8 +97,6 @@ if [ -d "$HOME/.zsh_variables" ]; then
 else
   echo "Directory $HOME/.zsh_variables does not exist."
 fi
-
-
 
 # bun completions
 [ -s "~/.bun/_bun" ] && source "~/.bun/_bun"

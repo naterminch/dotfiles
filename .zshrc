@@ -97,8 +97,7 @@ fi
 
 
 # bun completions
-[ -s "/Users/ivanl/.bun/_bun" ] && source "/Users/ivanl/.bun/_bun"
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -s "~/.bun/_bun" ] && source "~/.bun/_bun"
 
 ### Theme
 # Load starship theme

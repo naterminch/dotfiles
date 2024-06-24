@@ -23,68 +23,6 @@ zinit light-mode for \
 
 ### End of Zinit's installer chunk
 
-## HISTORY
-HISTSIZE=10000
-SAVEHIST=10000
-HISTFILE=~/.zsh_history
-
-### Zsh Options
-setopt SHARE_HISTORY
-setopt HIST_REDUCE_BLANKS
-setopt HIST_EXPIRE_DUPS_FIRST
-setopt INC_APPEND_HISTORY
-setopt HIST_IGNORE_DUPS
-setopt auto_cd
-
-### Functions
-gcob() {
-  git checkout "$(git branch --all | fzf | tr -d '[:space:]')"
-}
-
-### Alias
-alias grep='grep --color=auto'
-alias zinit-update="zinit update --parallel 40"
-
-
-### Zsh Packages
-zinit pack for dircolors-material
-
-
-### Setup plugins
-zinit light zsh-users/zsh-completions
-# Initialize completion.
-# See: https://github.com/Aloxaf/fzf-tab/issues/61
-zpcompinit; zpcdreplay
-
-zinit light Aloxaf/fzf-tab
-zinit light zdharma-continuum/fast-syntax-highlighting
-zinit light zsh-users/zsh-history-substring-search
-
-zinit load zdharma-continuum/history-search-multi-word
-zstyle ":history-search-multi-word" page-size "8"
-
-# Autosuggestion plugin config.
-ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-ZSH_AUTOSUGGEST_USE_ASYNC=1
-#ZSH_AUTOSUGGEST_MANUAL_REBIND=1
-zinit light zsh-users/zsh-autosuggestions
-
-# Binary release in archive, from GitHub-releases page.
-# After automatic unpacking it provides program "fzf".
-zi ice from"gh-r" as"program"
-zi light junegunn/fzf
-
-# sharkdp/bat
-zinit ice as"command" from"gh-r" mv"bat* -> bat" pick"bat/bat"
-zinit light sharkdp/bat
-
-# Load x from OMZ
-zi snippet OMZL::git.zsh
-zi snippet OMZP::git
-
-zi cdclear -q
-zi snippet OMZP::kubectx
-zi snippet OMZP::kubectl
 
 ### Load Other files
 source <(pkgx --shellcode)
@@ -98,14 +36,79 @@ else
   echo "Directory $HOME/.zsh_variables does not exist."
 fi
 
+
+### HISTORY
+HISTSIZE=10000
+HISTFILE=~/.zsh_history
+SAVEHIST=$HISTSIZE
+HISTDUP=erase
+setopt appendhistory
+setopt sharehistory
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
+setopt hist_ignore_dups
+setopt hist_find_no_dups
+
+
+### Functions
+gcob() {
+  git checkout "$(git branch --all | fzf | tr -d '[:space:]')"
+}
+
+### Aliases
+alias ls='ls --color'
+alias vim='nvim'
+alias c='clear'
+alias grep='grep --color=auto'
+alias zinit-update="zinit update --parallel 40"
+
+
+### Setup plugins
+zinit light zsh-users/zsh-completions
+zinit light zsh-users/zsh-syntax-highlighting
+zinit light zsh-users/zsh-autosuggestions
+zinit light zdharma-continuum/fast-syntax-highlighting
+zinit light zsh-users/zsh-history-substring-search
+zinit load zdharma-continuum/history-search-multi-word
+zinit light Aloxaf/fzf-tab
+zstyle ":history-search-multi-word" page-size "8"
+
+# Autosuggestion plugin config.
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+ZSH_AUTOSUGGEST_USE_ASYNC=1 
+
+# sharkdp/bat
+zinit ice as"command" from"gh-r" mv"bat* -> bat" pick"bat/bat"
+zinit light sharkdp/bat
+
+# Add in snippets
+zi snippet OMZL::git.zsh 
+zinit snippet OMZP::git
+zinit snippet OMZP::sudo
+zinit snippet OMZP::aws
+zinit snippet OMZP::kubectl
+zinit snippet OMZP::kubectx
+zinit snippet OMZP::command-not-found
+
+# Load completions
+autoload -Uz compinit && compinit
+
+zinit cdreplay -q
+
+# Completion styling
+# zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+# zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+# zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
+
 # bun completions
 [ -s "~/.bun/_bun" ] && source "~/.bun/_bun"
 
-### Theme
-# Load starship theme
-# line 1: `starship` binary as command, from github release
-# line 2: starship setup at clone(create init.zsh, completion)
-# line 3: pull behavior same as clone, source init.zsh
+# Shell integrations
+eval "$(fzf --zsh)"
+
+# Load starship 
 zinit ice as"command" from"gh-r" \
           atclone"./starship init zsh > init.zsh; ./starship completions zsh > _starship" \
           atpull"%atclone" src"init.zsh"
